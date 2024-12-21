@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Code Checking Widget</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            font-size: 16px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        button {
+            font-size: 16px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        .result {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h2>Dr. Saffaf's Code Checker</h2>
+    <p>DIRECTIONS: Replace the dataset name and variable names in the code below with your own dataset name and variable names. See Canvas for more details.<p>
+    <p>group1 <- MyData$DVName[MyData$IVName == "IVGroup1Name"]<p>
+    <p>Type your code below to see if it is correct:</p>
+    <textarea id="userInput" placeholder="Type your answer here"></textarea>
+    <button onclick="checkAnswer()">Check Answer</button>
+    <p class="result" id="result"></p>
+
+    <script>
+        // Pre-written answer
+        const correctAnswer = 'group1 <- MyData$DVName[MyData$IVName == "IVGroup1Name"]';
+
+        function checkAnswer() {
+            const userAnswer = document.getElementById('userInput').value.trim();
+            const resultElement = document.getElementById('result');
+
+            if (userAnswer === correctAnswer) {
+                resultElement.textContent = "Correct! Your answer matches.";
+                resultElement.className = "result correct";
+            } else {
+                resultElement.textContent = "Incorrect. Check your spelling and try again.";
+                resultElement.className = "result incorrect";
+            }
+        }
+    </script>
+</body>
+</html>
