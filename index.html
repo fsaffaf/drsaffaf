@@ -31,7 +31,7 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 20px;
-      align-items: start;
+      align-items: stretch;
     }
 
     .step {
@@ -40,12 +40,13 @@
       border-radius: 12px;
       padding: 15px;
       min-height: 240px;
+      display: flex;
+      flex-direction: column;
       transition: all 0.2s ease;
       opacity: 1;
     }
 
     .step.active {
-      opacity: 1;
       border: 2px solid #0d4a75;
       box-shadow: 0 6px 18px rgba(13,74,117,0.15);
       transform: translateY(-2px);
@@ -57,13 +58,17 @@
 
     .step h3 {
       font-size: 16px;
-      margin-top: 0;
+      margin: 0 0 10px 0;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 5px;
     }
 
     button {
-      display: block;
-      width: 100%;
-      margin-top: 8px;
       padding: 10px;
       border: none;
       border-radius: 8px;
@@ -71,6 +76,7 @@
       color: white;
       cursor: pointer;
       font-size: 14px;
+      width: 100%;
     }
 
     button:hover {
@@ -86,7 +92,6 @@
       display: none;
     }
 
-    /* RESULT LAYOUT FIXED */
     .result-inner {
       display: grid;
       grid-template-columns: 3fr 1fr;
@@ -103,19 +108,18 @@
     .ttest { color: #0057d9; }
     .correlation { color: #0a7a2f; }
 
-    /* START OVER BUTTON FIXED SIZE */
     .startover {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      padding: 8px 12px;
+      padding: 10px 14px;
       border: none;
       border-radius: 10px;
       background: #333;
       color: white;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 15px;
       width: auto;
       justify-self: end;
     }
@@ -138,9 +142,11 @@
 
     <div class="step" id="step1">
       <h3>What level of measurement is your data?</h3>
-      <button onclick="choose('measurement','categorical')">Categorical only (Chi-square tests)</button>
-      <button onclick="choose('measurement','cat_cont')">Categorical + Continuous (t-tests)</button>
-      <button onclick="choose('measurement','continuous')">Continuous only (Correlation)</button>
+      <div class="btn-group">
+        <button onclick="choose('measurement','categorical')">Categorical only (Chi-square tests)</button>
+        <button onclick="choose('measurement','cat_cont')">Categorical + Continuous (t-tests)</button>
+        <button onclick="choose('measurement','continuous')">Continuous only (Correlation)</button>
+      </div>
     </div>
 
     <div class="step" id="step2"></div>
@@ -187,23 +193,29 @@ function renderStep2(value) {
   if (value === 'categorical') {
     step2.innerHTML = `
       <h3>What are the details of the research design?</h3>
-      <button onclick="choose('design','two_var')">Association between two different variables</button>
-      <button onclick="choose('design','one_var')">Expected vs observed data for one variable</button>
+      <div class="btn-group">
+        <button onclick="choose('design','two_var')">Association between two different variables</button>
+        <button onclick="choose('design','one_var')">Expected vs observed data for one variable</button>
+      </div>
     `;
   }
 
   if (value === 'cat_cont') {
     step2.innerHTML = `
       <h3>What are the details of the research design?</h3>
-      <button onclick="choose('design','between')">Between-subjects</button>
-      <button onclick="choose('design','within')">Within-subjects</button>
+      <div class="btn-group">
+        <button onclick="choose('design','between')">Between-subjects</button>
+        <button onclick="choose('design','within')">Within-subjects</button>
+      </div>
     `;
   }
 
   if (value === 'continuous') {
     step2.innerHTML = `
       <h3>What are the details of the research design?</h3>
-      <button onclick="choose('design','relationship')">Relationship between variables</button>
+      <div class="btn-group">
+        <button onclick="choose('design','relationship')">Relationship between variables</button>
+      </div>
     `;
   }
 
@@ -211,6 +223,7 @@ function renderStep2(value) {
 }
 
 function handleDesign(value) {
+
   if (state.measurement === 'categorical') {
     let test = '';
 
@@ -228,9 +241,11 @@ function handleDesign(value) {
   setStepState('step3','active');
 
   step3.innerHTML = `
-    <h3>Is the data normal?</h3>
-    <button onclick="choose('normality','normal')">Normal</button>
-    <button onclick="choose('normality','not_normal')">Not normal</button>
+    <h3>Is the data normally distributed?</h3>
+    <div class="btn-group">
+      <button onclick="choose('normality','normal')">Normal</button>
+      <button onclick="choose('normality','not_normal')">Not normal</button>
+    </div>
   `;
 }
 
@@ -243,23 +258,18 @@ function showResult(testOverride=null, typeOverride=null) {
     if (state.measurement === 'cat_cont' && state.design === 'between' && state.normality === 'normal') {
       test = 'Independent t-test'; type = 'ttest';
     }
-
     if (state.measurement === 'cat_cont' && state.design === 'between' && state.normality === 'not_normal') {
       test = 'Mann–Whitney U'; type = 'ttest';
     }
-
     if (state.measurement === 'cat_cont' && state.design === 'within' && state.normality === 'normal') {
       test = 'Dependent t-test'; type = 'ttest';
     }
-
     if (state.measurement === 'cat_cont' && state.design === 'within' && state.normality === 'not_normal') {
       test = 'Wilcoxon Signed-Rank'; type = 'ttest';
     }
-
     if (state.measurement === 'continuous' && state.normality === 'normal') {
       test = 'Pearson Correlation'; type = 'correlation';
     }
-
     if (state.measurement === 'continuous' && state.normality === 'not_normal') {
       test = 'Spearman Correlation'; type = 'correlation';
     }
