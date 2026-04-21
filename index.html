@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Statistical Test Selector</title>
+  <title>Statistical Test Selector (Branching)</title>
   <style>
     body {
       font-family: Verdana, Geneva, sans-serif;
       background: #f7fbfd;
       margin: 0;
       padding: 40px 20px;
-      color: #1f2d3d;
     }
 
     .container {
@@ -18,199 +17,146 @@
       margin: 0 auto;
       background: white;
       border-radius: 16px;
-      padding: 32px;
+      padding: 30px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.06);
     }
 
-    h1 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    .subtitle {
-      text-align: center;
-      margin-bottom: 30px;
-      color: #4a5a6a;
-    }
+    h1 { text-align: center; }
 
     .step {
-      margin-bottom: 28px;
-    }
-
-    label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-
-    select {
-      width: 100%;
-      padding: 14px;
+      margin-top: 20px;
+      padding: 16px;
       border: 1px solid #c6ddea;
-      border-radius: 10px;
-      font-size: 16px;
-      background: white;
+      border-radius: 12px;
+      background: #f0f8ff;
     }
+
+    .hidden { display: none; }
 
     button {
+      display: block;
       width: 100%;
-      padding: 14px;
+      margin-top: 10px;
+      padding: 12px;
       border: none;
       border-radius: 10px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
       background: #0d4a75;
       color: white;
+      font-size: 16px;
+      cursor: pointer;
     }
 
-    button:hover {
-      opacity: 0.95;
-    }
+    button:hover { opacity: 0.9; }
 
     .result {
-      margin-top: 30px;
-      padding: 24px;
-      border-radius: 14px;
+      margin-top: 25px;
+      padding: 20px;
       background: #eaf6fc;
-      border: 1px solid #c6ddea;
+      border-radius: 12px;
       display: none;
+      border: 1px solid #c6ddea;
     }
 
-    .result h2 {
-      margin-top: 0;
-      color: #0d4a75;
-    }
-
-    .test-name {
-      font-size: 24px;
+    .test {
+      font-size: 22px;
       font-weight: bold;
-      margin-top: 10px;
+      color: #0d4a75;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Statistical Test Selector</h1>
-    <p class="subtitle">
-      Select your study design to identify the correct statistical test.
-    </p>
 
-    <div class="step">
-      <label for="measurement">Step 1: Level of Measurement</label>
-      <select id="measurement">
-        <option value="">Select an option</option>
-        <option value="categorical_only">Variables are categorical only</option>
-        <option value="categorical_continuous">One variable categorical + one continuous</option>
-        <option value="continuous_only">Variables are continuous only</option>
-      </select>
-    </div>
+<div class="container">
+  <h1>Statistical Test Selector</h1>
 
-    <div class="step">
-      <label for="design">Step 2: Research Design</label>
-      <select id="design">
-        <option value="">Select an option</option>
-        <option value="two_different_variables">Two different variables</option>
-        <option value="expected_distribution">One variable vs expected distribution</option>
-        <option value="between_subjects">Between-Subjects</option>
-        <option value="within_subjects">Within-Subjects</option>
-        <option value="relationship">Testing relationship between two variables</option>
-      </select>
-    </div>
-
-    <div class="step">
-      <label for="normality">Step 3: Is the Data Normal?</label>
-      <select id="normality">
-        <option value="">Select an option</option>
-        <option value="normal">Normal</option>
-        <option value="not_normal">NOT Normal</option>
-        <option value="na">Does Not Apply</option>
-      </select>
-    </div>
-
-    <button onclick="findTest()">Find My Statistical Test</button>
-
-    <div class="result" id="resultBox">
-      <h2>Recommended Test</h2>
-      <div class="test-name" id="testResult"></div>
-    </div>
+  <!-- STEP 1 -->
+  <div class="step" id="step1">
+    <h3>Step 1: What is the level of measurement?</h3>
+    <button onclick="chooseQ1('categorical')">Categorical only</button>
+    <button onclick="chooseQ1('cat_cont')">Categorical + Continuous</button>
+    <button onclick="chooseQ1('continuous')">Continuous only</button>
   </div>
 
-  <script>
-    const rules = [
-      {
-        measurement: "categorical_only",
-        design: "two_different_variables",
-        normality: "na",
-        test: "Chi-Square Test of Independence"
-      },
-      {
-        measurement: "categorical_only",
-        design: "expected_distribution",
-        normality: "na",
-        test: "Chi-Square Goodness of Fit"
-      },
-      {
-        measurement: "categorical_continuous",
-        design: "between_subjects",
-        normality: "normal",
-        test: "Independent t-test"
-      },
-      {
-        measurement: "categorical_continuous",
-        design: "between_subjects",
-        normality: "not_normal",
-        test: "Mann–Whitney U"
-      },
-      {
-        measurement: "categorical_continuous",
-        design: "within_subjects",
-        normality: "normal",
-        test: "Dependent t-test"
-      },
-      {
-        measurement: "categorical_continuous",
-        design: "within_subjects",
-        normality: "not_normal",
-        test: "Wilcoxon Signed-Rank"
-      },
-      {
-        measurement: "continuous_only",
-        design: "relationship",
-        normality: "normal",
-        test: "Pearson Correlation"
-      },
-      {
-        measurement: "continuous_only",
-        design: "relationship",
-        normality: "not_normal",
-        test: "Spearman Correlation"
-      }
-    ];
+  <!-- STEP 2A: CHI-SQUARE -->
+  <div class="step hidden" id="chiStep">
+    <h3>Step 2: Chi-Square Type?</h3>
+    <button onclick="showResult('Chi-Square Test of Independence')">Two variables (independence)</button>
+    <button onclick="showResult('Chi-Square Goodness of Fit')">One variable (expected distribution)</button>
+  </div>
 
-    function findTest() {
-      const measurement = document.getElementById("measurement").value;
-      const design = document.getElementById("design").value;
-      const normality = document.getElementById("normality").value;
+  <!-- STEP 2B: T-TEST -->
+  <div class="step hidden" id="ttestStep">
+    <h3>Step 2: Study Design?</h3>
+    <button onclick="chooseTTest('between')">Between-subjects</button>
+    <button onclick="chooseTTest('within')">Within-subjects</button>
+  </div>
 
-      const match = rules.find(rule =>
-        rule.measurement === measurement &&
-        rule.design === design &&
-        rule.normality === normality
-      );
+  <!-- STEP 3: NORMALITY FOR T-TEST -->
+  <div class="step hidden" id="ttestNormal">
+    <h3>Step 3: Is the data normal?</h3>
+    <button onclick="showResult('Independent t-test')">Normal</button>
+    <button onclick="showResult('Mann–Whitney / Wilcoxon Signed-Rank')">Not normal</button>
+  </div>
 
-      const resultBox = document.getElementById("resultBox");
-      const testResult = document.getElementById("testResult");
+  <!-- STEP 2C: CORRELATION -->
+  <div class="step hidden" id="corrStep">
+    <h3>Step 2: Relationship type?</h3>
+    <button onclick="showResult('Pearson Correlation')">Normal data</button>
+    <button onclick="showResult('Spearman Correlation')">Not normal</button>
+  </div>
 
-      if (match) {
-        testResult.textContent = match.test;
-      } else {
-        testResult.textContent = "No matching test found. Please review your selections.";
-      }
+  <!-- RESULT -->
+  <div class="result" id="resultBox">
+    <h3>Recommended Test</h3>
+    <div class="test" id="resultText"></div>
+  </div>
 
-      resultBox.style.display = "block";
-    }
-  </script>
+</div>
+
+<script>
+
+function resetAll() {
+  document.getElementById('chiStep').classList.add('hidden');
+  document.getElementById('ttestStep').classList.add('hidden');
+  document.getElementById('ttestNormal').classList.add('hidden');
+  document.getElementById('corrStep').classList.add('hidden');
+  document.getElementById('resultBox').style.display = 'none';
+}
+
+function chooseQ1(type) {
+  resetAll();
+  document.getElementById('step1').style.display = 'block';
+
+  if (type === 'categorical') {
+    document.getElementById('chiStep').classList.remove('hidden');
+  }
+
+  if (type === 'cat_cont') {
+    document.getElementById('ttestStep').classList.remove('hidden');
+  }
+
+  if (type === 'continuous') {
+    document.getElementById('corrStep').classList.remove('hidden');
+  }
+}
+
+function chooseTTest(type) {
+  window.ttestType = type;
+  document.getElementById('ttestStep').classList.add('hidden');
+  document.getElementById('ttestNormal').classList.remove('hidden');
+}
+
+function showResult(test) {
+  document.getElementById('chiStep').classList.add('hidden');
+  document.getElementById('ttestStep').classList.add('hidden');
+  document.getElementById('ttestNormal').classList.add('hidden');
+  document.getElementById('corrStep').classList.add('hidden');
+
+  document.getElementById('resultText').innerText = test;
+  document.getElementById('resultBox').style.display = 'block';
+}
+
+</script>
+
 </body>
 </html>
