@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Statistical Test Selector (Flow)</title>
+  <title>Statistical Test Selector (Responsive Flow)</title>
 
   <style>
     body {
@@ -27,7 +27,7 @@
       margin-bottom: 10px;
     }
 
-    /* TOP SUMMARY BAR */
+    /* SUMMARY BAR */
     .summary {
       display: flex;
       gap: 10px;
@@ -47,7 +47,7 @@
       font-size: 14px;
     }
 
-    /* FLOW ROW */
+    /* FLOW ROW (DESKTOP) */
     .flow {
       display: flex;
       gap: 20px;
@@ -86,10 +86,6 @@
       opacity: 0.9;
     }
 
-    button.secondary {
-      background: #4a6b82;
-    }
-
     .result {
       margin-top: 20px;
       padding: 20px;
@@ -104,6 +100,31 @@
       font-weight: bold;
       color: #0d4a75;
     }
+
+    /* ==========================
+       MOBILE OPTIMISATION (NEW)
+       ========================== */
+    @media (max-width: 768px) {
+
+      body {
+        padding: 15px;
+      }
+
+      .flow {
+        flex-direction: column;
+        overflow-x: visible;
+      }
+
+      .step {
+        min-width: 100%;
+      }
+
+      .summary {
+        flex-direction: column;
+      }
+
+    }
+
   </style>
 </head>
 <body>
@@ -112,9 +133,11 @@
 
   <h1>Statistical Test Selector</h1>
 
-  <!-- SUMMARY OF ANSWERS -->
+  <!-- SUMMARY -->
   <div class="summary" id="summary">
-    <div class="pill">Step 1: not answered</div>
+    <div class="pill">Measurement: not answered</div>
+    <div class="pill">Design: not answered</div>
+    <div class="pill">Normality: not answered</div>
   </div>
 
   <!-- FLOW -->
