@@ -39,7 +39,7 @@
       border: 1px solid #c6ddea;
       border-radius: 12px;
       padding: 15px;
-      min-height: 320px;
+      min-height: 240px;
       transition: all 0.2s ease;
       opacity: 1;
     }
@@ -86,39 +86,45 @@
       display: none;
     }
 
-    /* RESULT LAYOUT 75 / 25 */
+    /* RESULT LAYOUT FIXED */
     .result-inner {
-      display: flex;
+      display: grid;
+      grid-template-columns: 3fr 1fr;
       align-items: center;
       gap: 15px;
     }
 
     .test {
-      flex: 3;
       font-size: 22px;
       font-weight: bold;
     }
-
-    .startover {
-  padding: 8px 10px;
-  border: none;
-  border-radius: 10px;
-  background: #333;
-  color: white;
-  cursor: pointer;
-  font-size: 14px;
-  white-space: nowrap;
-}
 
     .chi-square { color: #d00000; }
     .ttest { color: #0057d9; }
     .correlation { color: #0a7a2f; }
 
+    /* START OVER BUTTON FIXED SIZE */
+    .startover {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 10px;
+      background: #333;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+      width: auto;
+      justify-self: end;
+    }
+
     @media (max-width: 768px) {
       body { padding: 15px; }
       .flow { grid-template-columns: 1fr; }
-      .result-inner { flex-direction: column; }
-      .startover { width: 100%; aspect-ratio: auto; }
+      .result-inner { grid-template-columns: 1fr; }
+      .startover { justify-self: start; }
     }
   </style>
 </head>
@@ -205,7 +211,6 @@ function renderStep2(value) {
 }
 
 function handleDesign(value) {
-
   if (state.measurement === 'categorical') {
     let test = '';
 
@@ -269,7 +274,6 @@ function showResult(testOverride=null, typeOverride=null) {
   el.className = 'test ' + type;
 
   document.getElementById('resultBox').style.display = 'block';
-  document.getElementById('startBtn').style.display = 'flex';
 }
 
 function resetAll() {
