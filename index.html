@@ -24,27 +24,7 @@
 
     h1 {
       text-align: center;
-      margin-bottom: 10px;
-    }
-
-    /* SUMMARY BAR */
-    .summary {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      background: #eaf6fc;
-      padding: 12px;
-      border-radius: 12px;
       margin-bottom: 20px;
-      border: 1px solid #c6ddea;
-    }
-
-    .pill {
-      background: white;
-      border: 1px solid #c6ddea;
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-size: 14px;
     }
 
     /* FLOW ROW (DESKTOP) */
@@ -101,11 +81,8 @@
       color: #0d4a75;
     }
 
-    /* ==========================
-       MOBILE OPTIMISATION (NEW)
-       ========================== */
+    /* MOBILE */
     @media (max-width: 768px) {
-
       body {
         padding: 15px;
       }
@@ -118,11 +95,6 @@
       .step {
         min-width: 100%;
       }
-
-      .summary {
-        flex-direction: column;
-      }
-
     }
 
   </style>
@@ -133,14 +105,6 @@
 
   <h1>Statistical Test Selector</h1>
 
-  <!-- SUMMARY -->
-  <div class="summary" id="summary">
-    <div class="pill">Measurement: not answered</div>
-    <div class="pill">Design: not answered</div>
-    <div class="pill">Normality: not answered</div>
-  </div>
-
-  <!-- FLOW -->
   <div class="flow">
 
     <!-- STEP 1 -->
@@ -175,17 +139,8 @@ const state = {
   normality: null
 };
 
-function updateSummary() {
-  document.getElementById('summary').innerHTML = `
-    <div class="pill">Measurement: ${state.measurement || 'not answered'}</div>
-    <div class="pill">Design: ${state.design || 'not answered'}</div>
-    <div class="pill">Normality: ${state.normality || 'not answered'}</div>
-  `;
-}
-
 function choose(type, value) {
   state[type] = value;
-  updateSummary();
 
   if (type === 'measurement') renderStep2(value);
   if (type === 'design') renderStep3();
@@ -271,8 +226,6 @@ function showResult() {
   document.getElementById('resultText').innerText = test;
   document.getElementById('resultBox').style.display = 'block';
 }
-
-updateSummary();
 
 </script>
 
