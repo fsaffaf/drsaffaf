@@ -27,7 +27,6 @@
       margin-bottom: 20px;
     }
 
-    /* FLOW ROW (DESKTOP) */
     .flow {
       display: flex;
       gap: 20px;
@@ -81,22 +80,11 @@
       color: #0d4a75;
     }
 
-    /* MOBILE */
     @media (max-width: 768px) {
-      body {
-        padding: 15px;
-      }
-
-      .flow {
-        flex-direction: column;
-        overflow-x: visible;
-      }
-
-      .step {
-        min-width: 100%;
-      }
+      body { padding: 15px; }
+      .flow { flex-direction: column; overflow-x: visible; }
+      .step { min-width: 100%; }
     }
-
   </style>
 </head>
 <body>
@@ -109,7 +97,7 @@
 
     <!-- STEP 1 -->
     <div class="step">
-      <h3>1. Measurement</h3>
+      <h3>What is the level of measurement for your data?</h3>
       <button onclick="choose('measurement','categorical')">Categorical only</button>
       <button onclick="choose('measurement','cat_cont')">Categorical + Continuous</button>
       <button onclick="choose('measurement','continuous')">Continuous only</button>
@@ -123,7 +111,6 @@
 
   </div>
 
-  <!-- RESULT -->
   <div class="result" id="resultBox">
     <h3>Recommended Test</h3>
     <div class="test" id="resultText"></div>
@@ -153,7 +140,7 @@ function renderStep2(value) {
 
   if (value === 'categorical') {
     step2.innerHTML = `
-      <h3>2. Chi-Square Type</h3>
+      <h3>What is the study design?</h3>
       <button onclick="choose('design','two_var')">Two variables</button>
       <button onclick="choose('design','one_var')">One variable</button>
     `;
@@ -161,7 +148,7 @@ function renderStep2(value) {
 
   if (value === 'cat_cont') {
     step2.innerHTML = `
-      <h3>2. Study Design</h3>
+      <h3>What is the study design?</h3>
       <button onclick="choose('design','between')">Between-subjects</button>
       <button onclick="choose('design','within')">Within-subjects</button>
     `;
@@ -169,7 +156,7 @@ function renderStep2(value) {
 
   if (value === 'continuous') {
     step2.innerHTML = `
-      <h3>2. Relationship Type</h3>
+      <h3>What is the study design?</h3>
       <button onclick="choose('design','relationship')">Relationship between variables</button>
     `;
   }
@@ -182,7 +169,7 @@ function renderStep3() {
   step3.style.display = 'block';
 
   step3.innerHTML = `
-    <h3>3. Normality</h3>
+    <h3>Is the data normal?</h3>
     <button onclick="choose('normality','normal')">Normal</button>
     <button onclick="choose('normality','not_normal')">Not normal</button>
   `;
