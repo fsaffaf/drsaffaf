@@ -3,58 +3,100 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Statistical Test Selector (Branching)</title>
+  <title>Statistical Test Selector (Flow)</title>
+
   <style>
     body {
       font-family: Verdana, Geneva, sans-serif;
       background: #f7fbfd;
       margin: 0;
-      padding: 40px 20px;
+      padding: 30px;
     }
 
     .container {
-      max-width: 900px;
-      margin: 0 auto;
+      max-width: 1100px;
+      margin: auto;
       background: white;
       border-radius: 16px;
-      padding: 30px;
+      padding: 25px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.06);
     }
 
-    h1 { text-align: center; }
-
-    .step {
-      margin-top: 20px;
-      padding: 16px;
-      border: 1px solid #c6ddea;
-      border-radius: 12px;
-      background: #f0f8ff;
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
     }
 
-    .hidden { display: none; }
+    /* TOP SUMMARY BAR */
+    .summary {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      background: #eaf6fc;
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #c6ddea;
+    }
+
+    .pill {
+      background: white;
+      border: 1px solid #c6ddea;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 14px;
+    }
+
+    /* FLOW ROW */
+    .flow {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      overflow-x: auto;
+    }
+
+    .step {
+      min-width: 260px;
+      background: #f0f8ff;
+      border: 1px solid #c6ddea;
+      border-radius: 12px;
+      padding: 15px;
+      flex-shrink: 0;
+    }
+
+    .step h3 {
+      font-size: 16px;
+      margin-top: 0;
+    }
 
     button {
       display: block;
       width: 100%;
-      margin-top: 10px;
-      padding: 12px;
+      margin-top: 8px;
+      padding: 10px;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       background: #0d4a75;
       color: white;
-      font-size: 16px;
       cursor: pointer;
+      font-size: 14px;
     }
 
-    button:hover { opacity: 0.9; }
+    button:hover {
+      opacity: 0.9;
+    }
+
+    button.secondary {
+      background: #4a6b82;
+    }
 
     .result {
-      margin-top: 25px;
+      margin-top: 20px;
       padding: 20px;
       background: #eaf6fc;
       border-radius: 12px;
-      display: none;
       border: 1px solid #c6ddea;
+      display: none;
     }
 
     .test {
@@ -67,42 +109,31 @@
 <body>
 
 <div class="container">
+
   <h1>Statistical Test Selector</h1>
 
-  <!-- STEP 1 -->
-  <div class="step" id="step1">
-    <h3>Step 1: What is the level of measurement?</h3>
-    <button onclick="chooseQ1('categorical')">Categorical only</button>
-    <button onclick="chooseQ1('cat_cont')">Categorical + Continuous</button>
-    <button onclick="chooseQ1('continuous')">Continuous only</button>
+  <!-- SUMMARY OF ANSWERS -->
+  <div class="summary" id="summary">
+    <div class="pill">Step 1: not answered</div>
   </div>
 
-  <!-- STEP 2A: CHI-SQUARE -->
-  <div class="step hidden" id="chiStep">
-    <h3>Step 2: Chi-Square Type?</h3>
-    <button onclick="showResult('Chi-Square Test of Independence')">Two variables (independence)</button>
-    <button onclick="showResult('Chi-Square Goodness of Fit')">One variable (expected distribution)</button>
-  </div>
+  <!-- FLOW -->
+  <div class="flow">
 
-  <!-- STEP 2B: T-TEST -->
-  <div class="step hidden" id="ttestStep">
-    <h3>Step 2: Study Design?</h3>
-    <button onclick="chooseTTest('between')">Between-subjects</button>
-    <button onclick="chooseTTest('within')">Within-subjects</button>
-  </div>
+    <!-- STEP 1 -->
+    <div class="step">
+      <h3>1. Measurement</h3>
+      <button onclick="choose('measurement','categorical')">Categorical only</button>
+      <button onclick="choose('measurement','cat_cont')">Categorical + Continuous</button>
+      <button onclick="choose('measurement','continuous')">Continuous only</button>
+    </div>
 
-  <!-- STEP 3: NORMALITY FOR T-TEST -->
-  <div class="step hidden" id="ttestNormal">
-    <h3>Step 3: Is the data normal?</h3>
-    <button onclick="showResult('Independent t-test')">Normal</button>
-    <button onclick="showResult('Mann–Whitney / Wilcoxon Signed-Rank')">Not normal</button>
-  </div>
+    <!-- STEP 2 -->
+    <div class="step" id="step2" style="display:none;"></div>
 
-  <!-- STEP 2C: CORRELATION -->
-  <div class="step hidden" id="corrStep">
-    <h3>Step 2: Relationship type?</h3>
-    <button onclick="showResult('Pearson Correlation')">Normal data</button>
-    <button onclick="showResult('Spearman Correlation')">Not normal</button>
+    <!-- STEP 3 -->
+    <div class="step" id="step3" style="display:none;"></div>
+
   </div>
 
   <!-- RESULT -->
@@ -115,46 +146,110 @@
 
 <script>
 
-function resetAll() {
-  document.getElementById('chiStep').classList.add('hidden');
-  document.getElementById('ttestStep').classList.add('hidden');
-  document.getElementById('ttestNormal').classList.add('hidden');
-  document.getElementById('corrStep').classList.add('hidden');
-  document.getElementById('resultBox').style.display = 'none';
+const state = {
+  measurement: null,
+  design: null,
+  normality: null
+};
+
+function updateSummary() {
+  document.getElementById('summary').innerHTML = `
+    <div class="pill">Measurement: ${state.measurement || 'not answered'}</div>
+    <div class="pill">Design: ${state.design || 'not answered'}</div>
+    <div class="pill">Normality: ${state.normality || 'not answered'}</div>
+  `;
 }
 
-function chooseQ1(type) {
-  resetAll();
-  document.getElementById('step1').style.display = 'block';
+function choose(type, value) {
+  state[type] = value;
+  updateSummary();
 
-  if (type === 'categorical') {
-    document.getElementById('chiStep').classList.remove('hidden');
-  }
-
-  if (type === 'cat_cont') {
-    document.getElementById('ttestStep').classList.remove('hidden');
-  }
-
-  if (type === 'continuous') {
-    document.getElementById('corrStep').classList.remove('hidden');
-  }
+  if (type === 'measurement') renderStep2(value);
+  if (type === 'design') renderStep3();
+  if (type === 'normality') showResult();
 }
 
-function chooseTTest(type) {
-  window.ttestType = type;
-  document.getElementById('ttestStep').classList.add('hidden');
-  document.getElementById('ttestNormal').classList.remove('hidden');
+function renderStep2(value) {
+  const step2 = document.getElementById('step2');
+  step2.style.display = 'block';
+
+  if (value === 'categorical') {
+    step2.innerHTML = `
+      <h3>2. Chi-Square Type</h3>
+      <button onclick="choose('design','two_var')">Two variables</button>
+      <button onclick="choose('design','one_var')">One variable</button>
+    `;
+  }
+
+  if (value === 'cat_cont') {
+    step2.innerHTML = `
+      <h3>2. Study Design</h3>
+      <button onclick="choose('design','between')">Between-subjects</button>
+      <button onclick="choose('design','within')">Within-subjects</button>
+    `;
+  }
+
+  if (value === 'continuous') {
+    step2.innerHTML = `
+      <h3>2. Relationship Type</h3>
+      <button onclick="choose('design','relationship')">Relationship between variables</button>
+    `;
+  }
+
+  document.getElementById('step3').style.display = 'none';
 }
 
-function showResult(test) {
-  document.getElementById('chiStep').classList.add('hidden');
-  document.getElementById('ttestStep').classList.add('hidden');
-  document.getElementById('ttestNormal').classList.add('hidden');
-  document.getElementById('corrStep').classList.add('hidden');
+function renderStep3() {
+  const step3 = document.getElementById('step3');
+  step3.style.display = 'block';
+
+  step3.innerHTML = `
+    <h3>3. Normality</h3>
+    <button onclick="choose('normality','normal')">Normal</button>
+    <button onclick="choose('normality','not_normal')">Not normal</button>
+  `;
+}
+
+function showResult() {
+  let test = 'No match';
+
+  if (state.measurement === 'categorical' && state.design === 'two_var') {
+    test = 'Chi-Square Test of Independence';
+  }
+
+  if (state.measurement === 'categorical' && state.design === 'one_var') {
+    test = 'Chi-Square Goodness of Fit';
+  }
+
+  if (state.measurement === 'cat_cont' && state.design === 'between' && state.normality === 'normal') {
+    test = 'Independent t-test';
+  }
+
+  if (state.measurement === 'cat_cont' && state.design === 'between' && state.normality === 'not_normal') {
+    test = 'Mann–Whitney U';
+  }
+
+  if (state.measurement === 'cat_cont' && state.design === 'within' && state.normality === 'normal') {
+    test = 'Dependent t-test';
+  }
+
+  if (state.measurement === 'cat_cont' && state.design === 'within' && state.normality === 'not_normal') {
+    test = 'Wilcoxon Signed-Rank';
+  }
+
+  if (state.measurement === 'continuous' && state.normality === 'normal') {
+    test = 'Pearson Correlation';
+  }
+
+  if (state.measurement === 'continuous' && state.normality === 'not_normal') {
+    test = 'Spearman Correlation';
+  }
 
   document.getElementById('resultText').innerText = test;
   document.getElementById('resultBox').style.display = 'block';
 }
+
+updateSummary();
 
 </script>
 
