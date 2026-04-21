@@ -86,38 +86,44 @@
       display: none;
     }
 
-    /* TWO COLUMN RESULT LAYOUT */
+    /* RESULT LAYOUT 75 / 25 */
     .result-inner {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 20px;
+      gap: 15px;
     }
 
     .test {
+      flex: 3;
       font-size: 22px;
       font-weight: bold;
+    }
+
+    .startover {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      background: #333;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+      aspect-ratio: 1 / 1;
     }
 
     .chi-square { color: #d00000; }
     .ttest { color: #0057d9; }
     .correlation { color: #0a7a2f; }
 
-    .startover {
-      padding: 10px 14px;
-      border: none;
-      border-radius: 10px;
-      background: #333;
-      color: white;
-      cursor: pointer;
-      font-size: 14px;
-      white-space: nowrap;
-    }
-
     @media (max-width: 768px) {
       body { padding: 15px; }
       .flow { grid-template-columns: 1fr; }
-      .result-inner { flex-direction: column; align-items: flex-start; }
+      .result-inner { flex-direction: column; }
+      .startover { width: 100%; aspect-ratio: auto; }
     }
   </style>
 </head>
@@ -145,7 +151,7 @@
     <h3>Recommended Test</h3>
     <div class="result-inner">
       <div class="test" id="resultText"></div>
-      <button class="startover" id="startBtn" onclick="resetAll()">Start Over</button>
+      <button class="startover" id="startBtn" onclick="resetAll()">↻</button>
     </div>
   </div>
 
@@ -268,6 +274,7 @@ function showResult(testOverride=null, typeOverride=null) {
   el.className = 'test ' + type;
 
   document.getElementById('resultBox').style.display = 'block';
+  document.getElementById('startBtn').style.display = 'flex';
 }
 
 function resetAll() {
