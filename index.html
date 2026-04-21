@@ -41,14 +41,20 @@
       padding: 15px;
       min-height: 320px;
       transition: all 0.2s ease;
-      opacity: 0.6;
+      opacity: 1;
     }
 
+    /* active step (current focus) */
     .step.active {
       opacity: 1;
       border: 2px solid #0d4a75;
       box-shadow: 0 6px 18px rgba(13,74,117,0.15);
       transform: translateY(-2px);
+    }
+
+    /* completed step (greyed out after use) */
+    .step.completed {
+      opacity: 0.5;
     }
 
     .step h3 {
@@ -87,17 +93,9 @@
       font-weight: bold;
     }
 
-    .chi-square {
-      color: #d00000;
-    }
-
-    .ttest {
-      color: #0057d9;
-    }
-
-    .correlation {
-      color: #0a7a2f;
-    }
+    .chi-square { color: #d00000; }
+    .ttest { color: #0057d9; }
+    .correlation { color: #0a7a2f; }
 
     @media (max-width: 768px) {
       body { padding: 15px; }
@@ -140,32 +138,36 @@ const state = {
   normality: null
 };
 
-function setActive(stepId) {
-  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-  const el = document.getElementById(stepId);
-  if (el) el.classList.add('active');
-}
-
-function setResult(text, type) {
-  const el = document.getElementById('resultText');
-  el.className = 'test';
-  el.classList.add(type);
-  el.innerText = text;
-  document.getElementById('resultBox').style.display = 'block';
+function setStepState(id, stateType) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('active','completed');
+  el.classList.add(stateType);
 }
 
 function choose(type, value) {
   state[type] = value;
 
-  if (type === 'measurement') renderStep2(value);
-  if (type === 'design') handleDesign(value);
-  if (type === 'normality') showResult();
+  if (type === 'measurement') {
+    setStepState('step1','completed');
+    renderStep2(value);
+  }
+
+  if (type === 'design') {
+    setStepState('step2','completed');
+    handleDesign(value);
+  }
+
+  if (type === 'normality') {
+    setStepState('step3','completed');
+    showResult();
+  }
 }
 
 function renderStep2(value) {
   const step2 = document.getElementById('step2');
 
-  setActive('step2');
+  setStepState('step2','active');
 
   if (value === 'categorical') {
     step2.innerHTML = `
@@ -195,20 +197,24 @@ function renderStep2(value) {
 
 function handleDesign(value) {
   if (state.measurement === 'categorical') {
-    setActive('step2');
-
     let test = '';
     let type = 'chi-square';
 
     if (value === 'two_var') test = 'Chi-Square Test of Independence';
     if (value === 'one_var') test = 'Chi-Square Goodness of Fit';
 
-    setResult(test, type);
+    setStepState('step2','completed');
+    setStepState('step1','completed');
+
+    document.getElementById('resultText').innerText = test;
+    document.getElementById('resultText').className = 'test ' + type;
+    document.getElementById('resultBox').style.display = 'block';
     return;
   }
 
   const step3 = document.getElementById('step3');
-  setActive('step3');
+
+  setStepState('step3','active');
 
   step3.innerHTML = `
     <h3>Is the data normal?</h3>
@@ -245,7 +251,13 @@ function showResult() {
     test = 'Spearman Correlation'; type = 'correlation';
   }
 
-  setResult(test, type);
+  setStepState('step3','completed');
+  setStepState('step2','completed');
+  setStepState('step1','completed');
+
+  document.getElementById('resultText').innerText = test;
+  document.getElementById('resultText').className = 'test ' + type;
+  document.getElementById('resultBox').style.display = 'block';
 }
 
 </script>
