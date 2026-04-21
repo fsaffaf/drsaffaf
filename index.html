@@ -100,20 +100,15 @@
     }
 
     .startover {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 12px;
-      border: none;
-      border-radius: 6px;
-      background: #333;
-      color: white;
-      cursor: pointer;
-      font-size: 16px;
-      aspect-ratio: 1 / 1;
-    }
+  padding: 8px 10px;
+  border: none;
+  border-radius: 10px;
+  background: #333;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap;
+}
 
     .chi-square { color: #d00000; }
     .ttest { color: #0057d9; }
@@ -151,7 +146,7 @@
     <h3>Recommended Test</h3>
     <div class="result-inner">
       <div class="test" id="resultText"></div>
-      <button class="startover" id="startBtn" onclick="resetAll()">↻</button>
+      <button class="startover" id="startBtn" onclick="resetAll()">↻ Start Over</button>
     </div>
   </div>
 
